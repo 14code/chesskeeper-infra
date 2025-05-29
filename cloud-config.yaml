@@ -1,0 +1,24 @@
+#cloud-config
+hostname: chesskeeper
+timezone: Europe/Berlin
+
+users:
+  - name: deploy
+    shell: /bin/bash
+    groups: [sudo, docker]
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAA...dein_ssh_public_key...
+
+package_update: true
+package_upgrade: true
+packages:
+  - git
+  - curl
+  - make
+  - docker.io
+  - docker-compose-plugin
+
+runcmd:
+  - curl -s https://raw.githubusercontent.com/14code/chesskeeper-infra/main/Makefile -o /home/deploy/Makefile
+  - cd /home/deploy && make install
