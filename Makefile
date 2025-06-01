@@ -1,6 +1,5 @@
 install: ssh-key
-	@echo "🔧 Initialisiere Chesskeeper Umgebung..."
-	git clone git@github.com:14code/chesskeeper-infra.git /opt/chesskeeper
+	@echo "🔧 Installiere Chesskeeper..."
 	cd /opt/chesskeeper && git clone git@github.com:14code/chesskeeper.git app
 	cd /opt/chesskeeper && docker compose up -d --build
 
