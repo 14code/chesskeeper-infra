@@ -15,6 +15,7 @@ mkdir -p output
 
 echo "🔧 Generating customized cloud-config.yaml..."
 sed -e "s|__DOMAIN__|$DOMAIN|g" \
+    -e "s|__DOMAINS__|$DOMAINS|g" \
     -e "s|__SSH_KEY__|$SSH_KEY|g" \
     -e "s|__LABEL__|$LABEL|g" \
     templates/cloud-config.template.yaml > output/cloud-config.yaml

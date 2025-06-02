@@ -21,6 +21,9 @@ pull:
 status:
 	docker compose ps
 
+configure:
+	bash scripts/configure.sh
+
 volume:
 	bash scripts/prepare-volume.sh
 
@@ -29,16 +32,16 @@ cloud-config:
 
 # 🔄 Standard update: pull latest code and restart containers (no rebuild)
 update:
-    cd /opt/chesskeeper-infra && git pull
-    cd /opt/chesskeeper-infra/app && git pull
-    docker compose up -d
+	cd /opt/chesskeeper && git pull
+	cd /opt/chesskeeper/app && git pull
+	docker compose up -d
 
 # 🔁 Full rebuild: pull code and rebuild containers (e.g. after Dockerfile changes)
 rebuild:
-    cd /opt/chesskeeper-infra && git pull
-    cd /opt/chesskeeper-infra/app && git pull
-    docker compose build
-    docker compose up -d
+	cd /opt/chesskeeper && git pull
+	cd /opt/chesskeeper/app && git pull
+	docker compose build
+	docker compose up -d
 
 build:
 	docker compose up -d --build
