@@ -1,6 +1,0 @@
-yourdomain.tld {
-    root * /srv/public
-    php_fastcgi php:9000
-    file_server
-    try_files {path} {path}/ /index.php?{query}
-}
