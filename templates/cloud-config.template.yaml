@@ -39,6 +39,7 @@ write_files:
       EOF
       cd /opt/chesskeeper
       make configure
+      chown -R chesskeeper:chesskeeper /opt/chesskeeper
       make volume
 
 runcmd:
