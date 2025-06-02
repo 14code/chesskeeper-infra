@@ -4,8 +4,9 @@ __DOMAINS__ {
     file_server
     try_files {path} {path}/ /index.php?{query}
     encode zstd gzip
+    
+    handle_errors {
+        respond "Oops! Something went wrong." 500
+    }
 }
 
-handle_errors {
-    respond "Oops! Something went wrong." 500
-}
