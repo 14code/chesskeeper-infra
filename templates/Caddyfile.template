@@ -10,3 +10,10 @@ __DOMAINS__ {
     }
 }
 
+:80, :443 {
+    root * /srv/public
+    file_server
+    respond "Chesskeeper fallback – valid domain required." 200
+}
+
+
