@@ -41,6 +41,7 @@ write_files:
       make configure
       chown -R chesskeeper:chesskeeper /opt/chesskeeper
       make volume
+      chown -R chesskeeper:chesskeeper /opt/chesskeeper
 
 runcmd:
   # SSH + Sicherheit (Hetzner-Empfehlung)
