@@ -36,7 +36,7 @@ echo "🔗 Mounting volume"
 sudo mount -a
 
 # Set permissions
-echo "🔐 Setting ownership to deploy:deploy"
-sudo chown -R deploy:deploy "$MOUNTPOINT"
+echo "🔐 Setting ownership to chesskeeper:chesskeeper"
+sudo chown -R chesskeeper:chesskeeper "$MOUNTPOINT"
 
 echo "✅ Volume setup complete."

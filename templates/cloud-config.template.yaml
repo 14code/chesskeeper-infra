@@ -24,12 +24,22 @@ write_files:
   - path: /etc/motd
     content: |
       Welcome to Chesskeeper Node!
-  - path: /opt/chesskeeper/.env
+  - path: /opt/chesskeeper-init.sh
+    permissions: '0755'
     content: |
-      DOMAINS=__DOMAINS__
-      LABEL=__LABEL__
-      SSH_KEY=__SSH_KEY__
-
+      #!/bin/bash
+      set -e
+      echo "📦 Cloning infra repo..."
+      git clone https://github.com/14code/chesskeeper-infra.git /opt/chesskeeper
+      echo "📝 Writing .env..."
+      cat <<EOF > /opt/chesskeeper/.env
+      DOMAINS="__DOMAINS__"
+      LABEL="__LABEL__"
+      SSH_KEY="__SSH_KEY__"
+      EOF
+      cd /opt/chesskeeper
+      make configure
+      make volume
 
 runcmd:
   # SSH + Sicherheit (Hetzner-Empfehlung)
@@ -50,9 +60,9 @@ runcmd:
   - sed -i -e '/^\(#\|\)AllowAgentForwarding/s/^.*$/AllowAgentForwarding no/' /etc/ssh/sshd_config
   - sed -i -e '/^\(#\|\)AuthorizedKeysFile/s/^.*$/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config
   - sed -i '$a AllowUsers chesskeeper' /etc/ssh/sshd_config
-  - systemctl restart sshd
+  - reboot
 
   # Chesskeeper Setup
-  - git clone https://github.com/14code/chesskeeper-infra.git /opt/chesskeeper
-  - cd /opt/chesskeeper && make configure
-  - cd /opt/chesskeeper && make volume
+  - bash /opt/chesskeeper-init.sh
+    
+  - echo "✅ Cloud-init finished" > /var/log/cloud-init-success
