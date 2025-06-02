@@ -47,10 +47,19 @@ build:
 	docker-compose up -d --build
 
 composer:
-	docker run --rm -u "$(id -u):$(id -g)" -v "$PWD/app:/app" -w /app composer install
+	docker run --rm \
+		-u "$$(id -u):$$(id -g)" \
+		-v "$$(pwd)/app:/app" \
+		-w /app \
+		composer install
 
 npm:
-	docker run --rm -u "$(id -u):$(id -g)" -v "$PWD/app:/app" -w /app node:20 npm install
+	docker run --rm \
+		-u "$$(id -u):$$(id -g)" \
+		-v "$$(pwd)/app:/app" \
+		-w /app \
+		node:20 npm install
+
 
 # 🔗 Link ./app/data to /mnt/chesskeeper-data (external volume mount)
 symlink-data:
