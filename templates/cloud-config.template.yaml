@@ -26,7 +26,6 @@ write_files:
       Welcome to Chesskeeper Node!
   - path: /opt/chesskeeper/.env
     content: |
-      DOMAIN=__DOMAIN__
       DOMAINS=__DOMAINS__
       LABEL=__LABEL__
       SSH_KEY=__SSH_KEY__
