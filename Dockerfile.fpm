@@ -4,6 +4,6 @@ RUN apt update && apt install -y \
     libsqlite3-dev libpng-dev \
     && docker-php-ext-install pdo pdo_mysql pdo_sqlite gd
     
-RUN echo "open_basedir=/srv/public:/srv/src:/srv/vendor:/srv/data:/srv/sql:/tmp" > /usr/local/etc/php/conf.d/chesskeeper-basedir.ini
+RUN echo "open_basedir=.:..:/srv/sql:/tmp" > /usr/local/etc/php/conf.d/chesskeeper-basedir.ini
 
 WORKDIR /srv
