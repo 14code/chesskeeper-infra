@@ -5,7 +5,9 @@ set -e
 if [ -f .env ]; then
   while IFS='=' read -r key value; do
     if [[ $key != \#* ]] && [[ -n "$key" ]]; then
-      export "$key"="$value"
+      value="${value%\"}"
+      value="${value#\"}"
+      export "$key=$value"
     fi
   done < .env
 fi
