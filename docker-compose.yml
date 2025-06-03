@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile.fpm
     volumes:
       - ./app:/srv
-      - ${DATA_VOLUME_PATH}:/srv/data
+      - ${DATA_VOLUME_PATH:-./app/data}:/srv/data
 
   caddy:
     restart: unless-stopped
