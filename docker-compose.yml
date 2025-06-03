@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile.fpm
     volumes:
       - ./app:/srv
-      - ${DATA_VOLUME_PATH:-./app/data}:/srv
+      - ${DATA_VOLUME_PATH:-./app/data}:/srv/data
 
   caddy:
     image: caddy:latest
