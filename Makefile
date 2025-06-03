@@ -1,7 +1,7 @@
 install: ssh-key
 	@echo "🔧 Installiere Chesskeeper..."
 	cd /opt/chesskeeper && git clone git@github.com:14code/chesskeeper.git app
-	cd /opt/chesskeeper && docker-compose up -d --build
+	cd /opt/chesskeeper && docker compose up -d --build
 
 ssh-key:
 	@if [ ! -f ~/.ssh/id_ed25519 ]; then \
@@ -16,10 +16,10 @@ ssh-key:
 
 pull:
 	cd /opt/chesskeeper/app && git pull
-	cd /opt/chesskeeper && docker-compose up -d --build
+	cd /opt/chesskeeper && docker compose up -d --build
 
 status:
-	docker-compose ps
+	docker compose ps
 
 configure:
 	bash scripts/configure.sh
@@ -34,17 +34,17 @@ cloud-config:
 update:
 	cd /opt/chesskeeper && git pull
 	cd /opt/chesskeeper/app && git pull
-	docker-compose up -d
+	docker compose up -d
 
 # 🔁 Full rebuild: pull code and rebuild containers (e.g. after Dockerfile changes)
 rebuild:
 	cd /opt/chesskeeper && git pull
 	cd /opt/chesskeeper/app && git pull
-	docker-compose build
-	docker-compose up -d
+	docker compose build
+	docker compose up -d
 
 build:
-	docker-compose up -d --build
+	docker compose up -d --build
 
 composer:
 	docker run --rm \

@@ -15,15 +15,38 @@ packages:
   - curl
   - git
   - make
-  - docker.io
-  - docker-compose-plugin
   - fail2ban
   - ufw
+  - ca-certificates
+  - gnupg
+  - lsb-release
 
 write_files:
   - path: /etc/motd
     content: |
       Welcome to Chesskeeper Node!
+
+  - path: /usr/local/bin/install-docker.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      set -e
+      
+      echo "📦 Installing Docker via official Docker repo..."
+      
+      sudo install -m 0755 -d /etc/apt/keyrings
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+      echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      
+      sudo apt update
+      sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+      
+      sudo systemctl enable docker
+      sudo usermod -aG docker chesskeeper
+
   - path: /opt/chesskeeper-init.sh
     permissions: '0755'
     content: |
@@ -34,6 +57,7 @@ write_files:
       echo "📝 Writing .env..."
       cat <<EOF > /opt/chesskeeper/.env
       DOMAINS="__DOMAINS__"
+      DATA_VOLUME_PATH="__DATA_VOLUME_PATH__"
       LABEL="__LABEL__"
       SSH_KEY="__SSH_KEY__"
       EOF
@@ -43,7 +67,7 @@ write_files:
       chown -R chesskeeper:chesskeeper /opt/chesskeeper
 
 runcmd:
-  # SSH + Sicherheit (Hetzner-Empfehlung)
+  # SSH + Security (Hetzner recommendation) 
   - printf "[sshd]\nenabled = true\nbanaction = iptables-multiport" > /etc/fail2ban/jail.local
   - systemctl enable fail2ban
   - ufw allow 2222
@@ -61,9 +85,13 @@ runcmd:
   - sed -i -e '/^\(#\|\)AllowAgentForwarding/s/^.*$/AllowAgentForwarding no/' /etc/ssh/sshd_config
   - sed -i -e '/^\(#\|\)AuthorizedKeysFile/s/^.*$/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config
   - sed -i '$a AllowUsers chesskeeper' /etc/ssh/sshd_config
-  - reboot
+    
+  # Docker Setup
+  - bash /usr/local/bin/install-docker.sh
 
   # Chesskeeper Setup
   - bash /opt/chesskeeper-init.sh
     
+  # Finish
   - echo "✅ Cloud-init finished" > /var/log/cloud-init-success
+  - reboot
