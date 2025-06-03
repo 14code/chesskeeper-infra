@@ -2,6 +2,8 @@ version: '3.8'
 
 services:
   php:
+    restart: unless-stopped
+    user: "${DOCKER_UID:-1000}:${DOCKER_GID:-1000}"
     build:
       context: .
       dockerfile: Dockerfile.fpm
@@ -10,7 +12,11 @@ services:
       - ${DATA_VOLUME_PATH:-./app/data}:/srv/data
 
   caddy:
+    restart: unless-stopped
+    user: "${DOCKER_UID:-1000}:${DOCKER_GID:-1000}"
     image: caddy:latest
+    cap_add:
+      - NET_BIND_SERVICE
     ports:
       - "80:80"
       - "443:443"

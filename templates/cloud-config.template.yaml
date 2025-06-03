@@ -54,6 +54,7 @@ write_files:
       set -e
       echo "📦 Cloning infra repo..."
       git clone https://github.com/14code/chesskeeper-infra.git /opt/chesskeeper
+      
       echo "📝 Writing .env..."
       cat <<EOF > /opt/chesskeeper/.env
       DOMAINS="__DOMAINS__"
@@ -61,6 +62,9 @@ write_files:
       LABEL="__LABEL__"
       SSH_KEY="__SSH_KEY__"
       EOF
+      echo "DOCKER_UID=$(getent passwd chesskeeper | cut -d: -f3)" >> /opt/chesskeeper/.env
+      echo "DOCKER_GID=$(getent passwd chesskeeper | cut -d: -f4)" >> /opt/chesskeeper/.env
+  
       cd /opt/chesskeeper
       make configure
       make volume
