@@ -6,8 +6,7 @@ users:
     shell: /bin/bash
     groups: [sudo, docker]
     sudo: ['ALL=(ALL) NOPASSWD:ALL']
-    ssh_authorized_keys:
-      - __SSH_KEY__
+    ssh_authorized_keys: __SSH_KEYS__
 
 package_update: true
 package_upgrade: true
@@ -58,9 +57,8 @@ write_files:
       echo "📝 Writing .env..."
       cat <<EOF > /opt/chesskeeper/.env
       DOMAINS="__DOMAINS__"
-      DATA_VOLUME_PATH="__DATA_VOLUME_PATH__"
-      LABEL="__LABEL__"
-      SSH_KEY="__SSH_KEY__"
+      DATA_VOLUME_PATH=__DATA_VOLUME_PATH__
+      LABEL=__LABEL__
       EOF
       echo "DOCKER_UID=$(getent passwd chesskeeper | cut -d: -f3)" >> /opt/chesskeeper/.env
       echo "DOCKER_GID=$(getent passwd chesskeeper | cut -d: -f4)" >> /opt/chesskeeper/.env
