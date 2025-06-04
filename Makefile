@@ -25,7 +25,8 @@ configure:
 	bash scripts/configure.sh
 
 volume:
-	bash scripts/prepare-volume.sh
+	@echo "📦 Preparing data volume..."
+	@FORCE_FORMAT=$(FORCE_FORMAT) bash scripts/prepare-volume.sh
 
 cloud-config:
 	bash scripts/prepare-cloud-config.sh

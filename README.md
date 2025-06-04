@@ -42,12 +42,18 @@ To attach persistent data (e.g., uploads, SQLite DBs):
 3. SSH into your server and run:
 
 ```bash
-bash scripts/prepare-volume.sh
+make volume
 ```
 
 This will:
-- Format the volume as `ext4`
+- Format the volume as ext4 (if no filesystem is detected)
 - Set the label to `chessdata`
 - Mount it to `/mnt/chesskeeper-data`
 - Add it to `/etc/fstab`
-- Ensure it's owned by `deploy:deploy`
+- Ensure it's owned by `chesskeeper:chesskeeper`
+
+To force a reformat (e.g., after reassigning a reused volume):
+
+```bash
+FORCE_FORMAT=1 make volume
+```

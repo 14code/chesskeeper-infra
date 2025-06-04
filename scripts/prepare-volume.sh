@@ -11,10 +11,16 @@ if ! lsblk "$DEVICE" &>/dev/null; then
   exit 1
 fi
 
-# Format if no filesystem
-if ! blkid -o value -s TYPE "$DEVICE" &>/dev/null; then
-  echo "📦 Formatting $DEVICE as ext4 with label $LABEL..."
-  sudo mkfs.ext4 -L "$LABEL" "$DEVICE"
+if [ "$FORCE_FORMAT" = "1" ]; then
+  echo "⚠️ FORCE_FORMAT is set – formatting $DEVICE as ext4..."
+  mkfs.ext4 -F "$DEVICE"
+else
+  if blkid "$DEVICE" > /dev/null 2>&1; then
+    echo "✅ Filesystem detected on $DEVICE – skipping format."
+  else
+    echo "📭 No filesystem found – creating ext4..."
+    mkfs.ext4 "$DEVICE"
+  fi
 fi
 
 # Mountpoint
