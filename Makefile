@@ -1,7 +1,11 @@
-install: ssh-key
+
+install: ssh-key ## Initial install: SSH key + clone + build
 	@echo "🔧 Installiere Chesskeeper..."
+	@if [ ! -d /opt/chesskeeper ]; then \
+		git clone git@github.com:14code/chesskeeper-infra.git /opt/chesskeeper; \
+	fi
 	cd /opt/chesskeeper && git clone git@github.com:14code/chesskeeper.git app
-	cd /opt/chesskeeper && docker compose up -d --build
+	$(MAKE) build
 
 ssh-key:
 	@if [ ! -f ~/.ssh/id_ed25519 ]; then \
@@ -13,10 +17,6 @@ ssh-key:
 	@echo "📋 Dein Public Key (kopiere ihn nach GitHub):"; \
 	cat ~/.ssh/id_ed25519.pub
 	@read -p "❓ Wenn du den Key zu GitHub hinzugefügt hast, drücke Enter zum Fortfahren... " confirm
-
-pull:
-	cd /opt/chesskeeper/app && git pull
-	cd /opt/chesskeeper && docker compose up -d --build
 
 status:
 	docker compose ps
@@ -31,21 +31,20 @@ volume:
 cloud-config:
 	bash scripts/prepare-cloud-config.sh
 
-# 🔄 Standard update: pull latest code and restart containers (no rebuild)
-update:
+# 🔄 Pull latest code
+pull:
 	cd /opt/chesskeeper && git pull
 	cd /opt/chesskeeper/app && git pull
-	docker compose up -d
+
+# 🔄 Standard update: pull latest code and restart containers (no rebuild)
+update: pull
+	cd /opt/chesskeeper && docker compose up -d
 
 # 🔁 Full rebuild: pull code and rebuild containers (e.g. after Dockerfile changes)
-rebuild:
-	cd /opt/chesskeeper && git pull
-	cd /opt/chesskeeper/app && git pull
-	docker compose build
-	docker compose up -d
+rebuild: pull build
 
 build:
-	docker compose up -d --build
+	cd /opt/chesskeeper && docker compose up -d --build
 
 composer:
 	docker run --rm \
@@ -73,4 +72,8 @@ symlink-data:
 		echo "🔗 Creating symlink: ./app/data → /mnt/chesskeeper-data"; \
 		ln -s /mnt/chesskeeper-data ./app/data; \
 	fi
+
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "🛠  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+
 
